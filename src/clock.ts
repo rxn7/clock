@@ -67,7 +67,7 @@ export default class Clock {
 	}
 
 	private renderHours(): void {
-		const fontSize: number = 120
+		const fontSize: number = 10 * this.scale
 		this.ctx.font = `${fontSize}px monospace`
 		this.ctx.fillStyle = '#fff'
 		const centerX: number = this.ctx.canvas.width * 0.5
