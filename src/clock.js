@@ -1,5 +1,5 @@
 import Hand from './hand.js';
-import { getHourAngle, getMinuteAngle, getSecondAngle } from './helpers/mathHelper.js';
+import { getHourAngle, getMinuteAngle, getSecondAngle, PI2 } from './helpers/mathHelper.js';
 const CLOCK_CIRCLE_THICKNESS = 1;
 const CLOCK_DOT_RADIUS_MULTIPLIER = 0.01;
 const CLOCK_MARGIN_PX = 10 + CLOCK_CIRCLE_THICKNESS;
@@ -31,6 +31,7 @@ export default class Clock {
     }
     render() {
         this.renderFace();
+        this.renderHours();
         this.hourHand.render(this.ctx);
         this.minuteHand.render(this.ctx);
         this.secondHand.render(this.ctx);
@@ -50,5 +51,22 @@ export default class Clock {
         this.ctx.fillStyle = '#fff';
         this.ctx.arc(this.ctx.canvas.width * 0.5, this.ctx.canvas.height * 0.5, this.radius * CLOCK_DOT_RADIUS_MULTIPLIER, 0, 2 * Math.PI);
         this.ctx.fill();
+    }
+    renderHours() {
+        const fontSize = 120;
+        this.ctx.font = `${fontSize}px monospace`;
+        this.ctx.fillStyle = '#fff';
+        const centerX = this.ctx.canvas.width * 0.5;
+        const centerY = this.ctx.canvas.height * 0.5;
+        for (let i = 1; i <= 12; ++i) {
+            const ratio = i / 12;
+            const text = ((i + 3) % 12 || 12).toString();
+            const metrics = this.ctx.measureText(text);
+            const x = Math.cos(ratio * PI2) * (this.radius - metrics.width * 0.5);
+            const y = Math.sin(ratio * PI2) * (this.radius - fontSize * 0.5);
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(text, centerX + x, centerY + y);
+        }
     }
 }
