@@ -1,15 +1,15 @@
 import Hand from './hand.js'
 import { getHourAngle, getMinuteAngle, getSecondAngle, PI2 } from './helpers/mathHelper.js'
 
-const CLOCK_CIRCLE_THICKNESS: number = 0.75
+const CLOCK_BORDER_THICKNESS: number = 0.75
 const CLOCK_DOT_RADIUS_MULTIPLIER: number = 0.01
-const CLOCK_MARGIN_PX: number = 10 + CLOCK_CIRCLE_THICKNESS
+const CLOCK_MARGIN_PX: number = 10 + CLOCK_BORDER_THICKNESS
 const SCALE_BASE: number = 100
 
 export default class Clock {
-	private hourHand: Hand = new Hand(this, SCALE_BASE * 0.2, 1.5, '#f00')
-	private minuteHand: Hand = new Hand(this, SCALE_BASE * 0.35, 1, '#0f0')
-	private secondHand: Hand = new Hand(this, SCALE_BASE * 0.4, 0.8, '#00f')
+	private hourHand: Hand = new Hand(this, SCALE_BASE * 0.2, 1.5, '#000')
+	private minuteHand: Hand = new Hand(this, SCALE_BASE * 0.35, 1, '#000')
+	private secondHand: Hand = new Hand(this, SCALE_BASE * 0.4, 0.5, '#f00')
 	private radius: number = 0
 	private scale: number = 1
 	private ctx: CanvasRenderingContext2D
@@ -24,11 +24,8 @@ export default class Clock {
 	public getRadius = (): number => this.radius
 
 	public handleResize(): void {
-		const widthGreaterThanHeight: boolean = this.ctx.canvas.width > this.ctx.canvas.height
-		const smallerValue: number = widthGreaterThanHeight ? this.ctx.canvas.height : this.ctx.canvas.width
-
-		this.scale = smallerValue / SCALE_BASE
-		this.radius = smallerValue * 0.5 - CLOCK_MARGIN_PX
+		this.scale = this.ctx.canvas.width / SCALE_BASE
+		this.radius = this.ctx.canvas.width * 0.5 - CLOCK_MARGIN_PX
 	}
 
 	public update(): void {
@@ -49,17 +46,17 @@ export default class Clock {
 
 	private renderFace(): void {
 		this.ctx.beginPath()
-		this.ctx.strokeStyle = '#fff'
-		this.ctx.lineWidth = CLOCK_CIRCLE_THICKNESS * this.scale
+		this.ctx.strokeStyle = '#000'
+		this.ctx.lineWidth = CLOCK_BORDER_THICKNESS * this.scale
 		this.ctx.arc(this.ctx.canvas.width * 0.5, this.ctx.canvas.height * 0.5, this.radius, 0, 2 * Math.PI)
 		this.ctx.stroke()
-		this.ctx.fillStyle = '#282828'
+		this.ctx.fillStyle = '#fff'
 		this.ctx.fill()
 	}
 
 	private renderDot(): void {
 		this.ctx.beginPath()
-		this.ctx.fillStyle = '#fff'
+		this.ctx.fillStyle = '#000'
 		this.ctx.arc(this.ctx.canvas.width * 0.5, this.ctx.canvas.height * 0.5, this.radius * CLOCK_DOT_RADIUS_MULTIPLIER, 0, 2 * Math.PI)
 		this.ctx.fill()
 	}
@@ -69,7 +66,7 @@ export default class Clock {
 		const centerY: number = this.ctx.canvas.height * 0.5
 
 		this.ctx.strokeStyle = '#000'
-		this.ctx.lineWidth = 0.75 * this.scale
+		this.ctx.lineWidth = 0.5 * this.scale
 
 		for (let hour: number = 1; hour <= 12; ++hour) {
 			const ratio: number = hour / 12
@@ -85,7 +82,7 @@ export default class Clock {
 
 	private renderHourLine(centerX: number, centerY: number, dirX: number, dirY: number): void {
 		this.ctx.beginPath()
-		this.ctx.moveTo(centerX + dirX * (this.radius * 0.8), centerY + dirY * (this.radius * 0.8))
+		this.ctx.moveTo(centerX + dirX * (this.radius * 0.9), centerY + dirY * (this.radius * 0.9))
 		this.ctx.lineTo(centerX + dirX * this.radius, centerY + dirY * this.radius)
 		this.ctx.stroke()
 	}
@@ -97,7 +94,7 @@ export default class Clock {
 			const minuteDirY = Math.sin(minuteRatio * PI2)
 
 			this.ctx.beginPath()
-			this.ctx.moveTo(centerX + minuteDirX * (this.radius * 0.9), centerY + minuteDirY * (this.radius * 0.9))
+			this.ctx.moveTo(centerX + minuteDirX * (this.radius * 0.95), centerY + minuteDirY * (this.radius * 0.95))
 			this.ctx.lineTo(centerX + minuteDirX * this.radius, centerY + minuteDirY * this.radius)
 			this.ctx.stroke()
 		}
@@ -109,12 +106,12 @@ export default class Clock {
 		const text: string = ((hour + 3) % 12 || 12).toString()
 		const metrics: TextMetrics = this.ctx.measureText(text)
 
-		const textX: number = dirX * (this.radius - metrics.width * 0.5)
-		const textY: number = dirY * (this.radius - fontSize * 0.5)
+		const textX: number = dirX * (this.radius - metrics.width * 0.5) * 0.9
+		const textY: number = dirY * (this.radius - fontSize * 0.5) * 0.9
 
 		this.ctx.beginPath()
 		this.ctx.font = `${fontSize}px monospace`
-		this.ctx.fillStyle = '#fff'
+		this.ctx.fillStyle = '#000'
 		this.ctx.textAlign = 'center'
 		this.ctx.textBaseline = 'middle'
 		this.ctx.fillText(text, centerX + textX, centerY + textY)
