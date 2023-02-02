@@ -53,7 +53,7 @@ export default class Clock {
         this.ctx.fill();
     }
     renderHours() {
-        const fontSize = 120;
+        const fontSize = 10 * this.scale;
         this.ctx.font = `${fontSize}px monospace`;
         this.ctx.fillStyle = '#fff';
         const centerX = this.ctx.canvas.width * 0.5;
