@@ -30,9 +30,13 @@ export default class Clock {
 
 	public update(): void {
 		const now: Date = new Date()
-		this.hourHand.angle = getHourAngle(now)
-		this.minuteHand.angle = getMinuteAngle(now)
-		this.secondHand.angle = getSecondAngle(now)
+		this.setTime(now)
+	}
+
+	public setTime(date: Date): void {
+		this.hourHand.angle = getHourAngle(date)
+		this.minuteHand.angle = getMinuteAngle(date)
+		this.secondHand.angle = getSecondAngle(date)
 	}
 
 	public render(): void {
