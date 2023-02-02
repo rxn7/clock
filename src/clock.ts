@@ -40,7 +40,7 @@ export default class Clock {
 
 	public render(): void {
 		this.renderFace()
-		this.renderHours()
+		this.renderFaceDecorations()
 		this.hourHand.render(this.ctx)
 		this.minuteHand.render(this.ctx)
 		this.secondHand.render(this.ctx)
@@ -64,22 +64,59 @@ export default class Clock {
 		this.ctx.fill()
 	}
 
-	private renderHours(): void {
-		const fontSize: number = 10 * this.scale
-		this.ctx.font = `${fontSize}px monospace`
-		this.ctx.fillStyle = '#fff'
+	private renderFaceDecorations(): void {
 		const centerX: number = this.ctx.canvas.width * 0.5
 		const centerY: number = this.ctx.canvas.height * 0.5
-		for (let i: number = 1; i <= 12; ++i) {
-			const ratio: number = i / 12
-			const text: string = ((i + 3) % 12 || 12).toString()
-			const metrics: TextMetrics = this.ctx.measureText(text)
-			const x: number = Math.cos(ratio * PI2) * (this.radius - metrics.width * 0.5)
-			const y: number = Math.sin(ratio * PI2) * (this.radius - fontSize * 0.5)
 
-			this.ctx.textAlign = 'center'
-			this.ctx.textBaseline = 'middle'
-			this.ctx.fillText(text, centerX + x, centerY + y)
+		this.ctx.strokeStyle = '#000'
+		this.ctx.lineWidth = 0.75 * this.scale
+
+		for (let hour: number = 1; hour <= 12; ++hour) {
+			const ratio: number = hour / 12
+
+			const dirX = Math.cos(ratio * PI2)
+			const dirY = Math.sin(ratio * PI2)
+
+			this.renderHourLine(centerX, centerY, dirX, dirY)
+			this.renderMinutesLines(hour, centerX, centerY)
+			this.renderHourNumberText(hour, centerX, centerY, dirX, dirY)
 		}
+	}
+
+	private renderHourLine(centerX: number, centerY: number, dirX: number, dirY: number): void {
+		this.ctx.beginPath()
+		this.ctx.moveTo(centerX + dirX * (this.radius * 0.8), centerY + dirY * (this.radius * 0.8))
+		this.ctx.lineTo(centerX + dirX * this.radius, centerY + dirY * this.radius)
+		this.ctx.stroke()
+	}
+
+	private renderMinutesLines(hour: number, centerX: number, centerY: number): void {
+		for (let i: number = 1; i < 5; ++i) {
+			const minuteRatio = (hour * 5 + i) / 60
+			const minuteDirX = Math.cos(minuteRatio * PI2)
+			const minuteDirY = Math.sin(minuteRatio * PI2)
+
+			this.ctx.beginPath()
+			this.ctx.moveTo(centerX + minuteDirX * (this.radius * 0.9), centerY + minuteDirY * (this.radius * 0.9))
+			this.ctx.lineTo(centerX + minuteDirX * this.radius, centerY + minuteDirY * this.radius)
+			this.ctx.stroke()
+		}
+	}
+
+	private renderHourNumberText(hour: number, centerX: number, centerY: number, dirX: number, dirY: number): void {
+		const fontSize: number = 10 * this.scale
+
+		const text: string = ((hour + 3) % 12 || 12).toString()
+		const metrics: TextMetrics = this.ctx.measureText(text)
+
+		const textX: number = dirX * (this.radius - metrics.width * 0.5)
+		const textY: number = dirY * (this.radius - fontSize * 0.5)
+
+		this.ctx.beginPath()
+		this.ctx.font = `${fontSize}px monospace`
+		this.ctx.fillStyle = '#fff'
+		this.ctx.textAlign = 'center'
+		this.ctx.textBaseline = 'middle'
+		this.ctx.fillText(text, centerX + textX, centerY + textY)
 	}
 }
