@@ -1,9 +1,7 @@
-// TODO: Render hours on the face
-
 import Hand from './hand.js'
-import { deg2rad, getHourAngle, getMinuteAngle, getSecondAngle, PI2 } from './helpers/mathHelper.js'
+import { getHourAngle, getMinuteAngle, getSecondAngle, PI2 } from './helpers/mathHelper.js'
 
-const CLOCK_CIRCLE_THICKNESS: number = 1
+const CLOCK_CIRCLE_THICKNESS: number = 0.75
 const CLOCK_DOT_RADIUS_MULTIPLIER: number = 0.01
 const CLOCK_MARGIN_PX: number = 10 + CLOCK_CIRCLE_THICKNESS
 const SCALE_BASE: number = 100
