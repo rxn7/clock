@@ -1,3 +1,4 @@
+import DateDisplay from './dateDisplay.js';
 import Hand from './hand.js';
 import { getHourAngle, getMinuteAngle, getSecondAngle, PI2 } from './helpers/mathHelper.js';
 const CLOCK_BORDER_THICKNESS = 0.75;
@@ -6,24 +7,32 @@ const CLOCK_MARGIN_PX = 10 + CLOCK_BORDER_THICKNESS;
 const SCALE_BASE = 100;
 export default class Clock {
     constructor(ctx) {
+        this.radius = 0;
+        this.scale = 1;
+        this.ctx = ctx;
         this.hourHand = new Hand(this, SCALE_BASE * 0.2, 1.5, '#000');
         this.minuteHand = new Hand(this, SCALE_BASE * 0.35, 1, '#000');
         this.secondHand = new Hand(this, SCALE_BASE * 0.4, 0.5, '#f00');
-        this.radius = 0;
-        this.scale = 1;
-        this.getScale = () => this.scale;
-        this.getRadius = () => this.radius;
-        this.ctx = ctx;
+        this.dateDisplay = new DateDisplay(this);
         this.update();
         setInterval(this.update.bind(this), 1000);
+    }
+    getScale() {
+        return this.scale;
+    }
+    getRadius() {
+        return this.radius;
     }
     handleResize() {
         this.scale = this.ctx.canvas.width / SCALE_BASE;
         this.radius = this.ctx.canvas.width * 0.5 - CLOCK_MARGIN_PX;
+        this.dateDisplay.handleResize();
+        document.body.style.setProperty('--scale', `${this.scale}`);
     }
     update() {
         const now = new Date();
         this.setTime(now);
+        this.dateDisplay.update();
     }
     setTime(date) {
         this.hourHand.angle = getHourAngle(date);
@@ -33,9 +42,10 @@ export default class Clock {
     render() {
         this.renderFace();
         this.renderFaceDecorations();
-        this.hourHand.render(this.ctx);
-        this.minuteHand.render(this.ctx);
-        this.secondHand.render(this.ctx);
+        this.dateDisplay.render();
+        this.hourHand.render();
+        this.minuteHand.render();
+        this.secondHand.render();
         this.renderDot();
     }
     renderFace() {

@@ -1,5 +1,5 @@
 import Clock from './clock.js';
-const canvas = document.createElement('canvas');
+const canvas = document.getElementById('clock-canvas');
 const ctx = canvas.getContext('2d');
 const clock = new Clock(ctx);
 const clearColor = getComputedStyle(document.body).getPropertyValue('--background-color');
