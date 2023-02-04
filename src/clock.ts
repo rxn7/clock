@@ -1,3 +1,4 @@
+import DateDisplay from './dateDisplay.js'
 import Hand from './hand.js'
 import { getHourAngle, getMinuteAngle, getSecondAngle, PI2 } from './helpers/mathHelper.js'
 
@@ -7,30 +8,44 @@ const CLOCK_MARGIN_PX: number = 10 + CLOCK_BORDER_THICKNESS
 const SCALE_BASE: number = 100
 
 export default class Clock {
-	private hourHand: Hand = new Hand(this, SCALE_BASE * 0.2, 1.5, '#000')
-	private minuteHand: Hand = new Hand(this, SCALE_BASE * 0.35, 1, '#000')
-	private secondHand: Hand = new Hand(this, SCALE_BASE * 0.4, 0.5, '#f00')
+	private hourHand: Hand
+	private minuteHand: Hand
+	private secondHand: Hand
+	private dateDisplay: DateDisplay
 	private radius: number = 0
 	private scale: number = 1
-	private ctx: CanvasRenderingContext2D
+	public ctx: CanvasRenderingContext2D
 
 	constructor(ctx: CanvasRenderingContext2D) {
 		this.ctx = ctx
+		this.hourHand = new Hand(this, SCALE_BASE * 0.2, 1.5, '#000')
+		this.minuteHand = new Hand(this, SCALE_BASE * 0.35, 1, '#000')
+		this.secondHand = new Hand(this, SCALE_BASE * 0.4, 0.5, '#f00')
+		this.dateDisplay = new DateDisplay(this)
 		this.update()
 		setInterval(this.update.bind(this), 1000)
 	}
 
-	public getScale = (): number => this.scale
-	public getRadius = (): number => this.radius
+	public getScale(): number {
+		return this.scale
+	}
+
+	public getRadius(): number {
+		return this.radius
+	}
 
 	public handleResize(): void {
 		this.scale = this.ctx.canvas.width / SCALE_BASE
 		this.radius = this.ctx.canvas.width * 0.5 - CLOCK_MARGIN_PX
+		this.dateDisplay.handleResize()
+
+		document.body.style.setProperty('--scale', `${this.scale}`)
 	}
 
 	public update(): void {
 		const now: Date = new Date()
 		this.setTime(now)
+		this.dateDisplay.update()
 	}
 
 	public setTime(date: Date): void {
@@ -42,9 +57,10 @@ export default class Clock {
 	public render(): void {
 		this.renderFace()
 		this.renderFaceDecorations()
-		this.hourHand.render(this.ctx)
-		this.minuteHand.render(this.ctx)
-		this.secondHand.render(this.ctx)
+		this.dateDisplay.render()
+		this.hourHand.render()
+		this.minuteHand.render()
+		this.secondHand.render()
 		this.renderDot()
 	}
 

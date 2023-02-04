@@ -1,6 +1,6 @@
 import Clock from './clock.js'
 
-const canvas: HTMLCanvasElement = document.createElement('canvas')
+const canvas: HTMLCanvasElement = document.getElementById('clock-canvas') as HTMLCanvasElement
 const ctx: CanvasRenderingContext2D = canvas.getContext('2d') as CanvasRenderingContext2D
 const clock: Clock = new Clock(ctx)
 const clearColor: string = getComputedStyle(document.body).getPropertyValue('--background-color')
