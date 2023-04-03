@@ -24,7 +24,7 @@ export default class DateDisplay {
 		this.height = this.clock.getScale() * 5
 
 		this.originX = (this.ctx.canvas.width - this.width) * 0.5
-		this.originY = (this.ctx.canvas.height - this.height) * 0.5 + this.clock.getRadius() * 0.65
+		this.originY = (this.ctx.canvas.height - this.height) * 0.5 + this.clock.getRadius() * 0.6
 
 		this.fontSize = FONT_SIZE_UNSCALED * this.clock.getScale()
 
