@@ -9,6 +9,12 @@
 	"keywords": [
 		"typescript"
 	],
+  "scripts": {
+    "start": "./run.sh",
+    "build": "./build.sh",
+    "deploy": "./deploy.sh",
+    "bd": "./build.sh && ./deploy.sh"
+  },
 	"author": "rxn7",
 	"license": "ISC",
 	"homepage": "https://github.com/rxn7/clock"
